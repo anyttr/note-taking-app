@@ -1,5 +1,5 @@
 
-- Copiază:
+
 
 ```typescript
 import React from 'react';
