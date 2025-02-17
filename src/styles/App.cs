@@ -1,5 +1,4 @@
 
-- Copiază:
 
 ```css
 .app-container {
