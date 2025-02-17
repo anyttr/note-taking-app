@@ -1,15 +1,17 @@
-
-
-
 import React, { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { motion } from 'framer-motion';
 import '../styles/NoteEditor.css';
 
+interface Tag {
+  id: string;
+  name: string;
+}
+
 export const NoteEditor: React.FC = () => {
-  const [title, setTitle] = useState('Notă nouă');
-  const [tags, setTags] = useState<string[]>([]);
+  const [title, setTitle] = useState<string>('Notă nouă');
+  const [tags, setTags] = useState<Tag[]>([]);
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -21,15 +23,21 @@ export const NoteEditor: React.FC = () => {
     },
   });
 
-  const addTag = (tag: string) => {
-    if (!tags.includes(tag)) {
-      setTags([...tags, tag]);
-    }
+  const addTag = (tagName: string) => {
+    const newTag: Tag = {
+      id: Date.now().toString(),
+      name: tagName
+    };
+    setTags([...tags, newTag]);
   };
 
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+  const removeTag = (tagId: string) => {
+    setTags(tags.filter(tag => tag.id !== tagId));
   };
+
+  if (!editor) {
+    return null;
+  }
 
   return (
     <div className="note-editor">
@@ -49,20 +57,25 @@ export const NoteEditor: React.FC = () => {
         <div className="tags-container">
           {tags.map(tag => (
             <motion.span
-              key={tag}
+              key={tag.id}
               className="tag"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               whileHover={{ scale: 1.1 }}
             >
-              #{tag}
-              <button onClick={() => removeTag(tag)}>×</button>
+              #{tag.name}
+              <button 
+                onClick={() => removeTag(tag.id)}
+                type="button"
+              >
+                ×
+              </button>
             </motion.span>
           ))}
           <input
             type="text"
             placeholder="Adaugă tag..."
-            onKeyDown={e => {
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === 'Enter' && e.currentTarget.value) {
                 addTag(e.currentTarget.value);
                 e.currentTarget.value = '';
@@ -75,26 +88,30 @@ export const NoteEditor: React.FC = () => {
 
       <div className="editor-toolbar">
         <button
-          onClick={() => editor?.chain().focus().toggleBold().run()}
-          className={editor?.isActive('bold') ? 'is-active' : ''}
+          type="button"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={editor.isActive('bold') ? 'is-active' : ''}
         >
           B
         </button>
         <button
-          onClick={() => editor?.chain().focus().toggleItalic().run()}
-          className={editor?.isActive('italic') ? 'is-active' : ''}
+          type="button"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={editor.isActive('italic') ? 'is-active' : ''}
         >
           I
         </button>
         <button
-          onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor?.isActive('heading') ? 'is-active' : ''}
+          type="button"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={editor.isActive('heading') ? 'is-active' : ''}
         >
           H2
         </button>
         <button
-          onClick={() => editor?.chain().focus().toggleBulletList().run()}
-          className={editor?.isActive('bulletList') ? 'is-active' : ''}
+          type="button"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={editor.isActive('bulletList') ? 'is-active' : ''}
         >
           •
         </button>
@@ -104,4 +121,3 @@ export const NoteEditor: React.FC = () => {
     </div>
   );
 };
-```
