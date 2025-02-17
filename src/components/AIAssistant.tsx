@@ -1,5 +1,4 @@
 
-- Copiază:
 
 ```typescript
 import React, { useState } from 'react';
