@@ -1,6 +1,5 @@
 
 
-```css
 .app-container {
   display: grid;
   grid-template-columns: 250px 1fr 300px;
